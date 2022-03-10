@@ -7,6 +7,21 @@ app.use(express.json());
 
 const customers = []; //To emulate the database
 
+// Middleware
+function verifyAccountExistenceByCPF(request, response, next){
+    const { cpf } = request.headers;
+    
+    const customer = customers.find(customer => customer.cpf === cpf);
+
+    if(!customer){
+        return response.status(400).json({error: "Customer not found"});
+    }
+
+    request.customer = customer;
+
+    return next();
+}
+
 /**
  * -- BODY MODEL FOR ACCOUNT --
  * cpf - string
@@ -35,14 +50,8 @@ app.post("/account", (request, response) =>{
     return response.status(201).send();
 });
 
-app.get("/statement", (request, response) => {
-    const { cpf } = request.headers;
-    
-    const customer = customers.find(customer => customer.cpf === cpf);
-
-    if(!customer){
-        return response.status(400).json({error: "Customer not found"});
-    }
+app.get("/statement", verifyAccountExistenceByCPF, (request, response) => {
+    const { customer } = request;
 
     return response.json(customer.statement);
 });
