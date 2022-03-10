@@ -17,12 +17,18 @@ const customers = []; //To emulate the database
 app.post("/account", (request, response) =>{
     const { cpf, name } = request.body;
 
-    const id = uuidv4();
+    const customerExists = customers.some(
+        (customer) => customer.cpf === cpf
+    );
+
+    if(customerExists){
+        return response.status(400).json({ error: "CPF already in use"});
+    }
 
     customers.push({
         cpf,
         name,
-        id,
+        id: uuidv4(),
         statement: [],
     });
 
