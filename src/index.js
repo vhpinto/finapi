@@ -17,6 +17,7 @@ function verifyAccountExistenceByCPF(request, response, next){
         return response.status(400).json({error: "Customer not found"});
     }
 
+    // Inserting information into request so it's possible to retrive inside the route
     request.customer = customer;
 
     return next();
@@ -54,6 +55,36 @@ app.get("/statement", verifyAccountExistenceByCPF, (request, response) => {
     const { customer } = request;
 
     return response.json(customer.statement);
+});
+
+app.post("/deposit", verifyAccountExistenceByCPF, (request, response) => {
+    const { description, amount } = request.body;
+
+    const { customer } = request;
+
+    const statementTrasaction = {
+        description,
+        amount,
+        created_at: new Date(),
+        type: "credit"
+    }
+
+    customer.statement.push(statementTrasaction);
+
+    return response.status(201).send();
+});
+
+app.get("/statement/date", verifyAccountExistenceByCPF, (request, response) => {
+    const { customer } = request;
+    const { date } = request.query;
+
+    const dateFormart = new Date(date + " 00:00"); // Regardless of time
+
+    const statement = customer.statement.filter(
+        (statement) =>
+        statement.created_at.toDateString() === new Date(dateFormart).toDateString());
+    
+    return response.json(statement);
 });
 
 app.listen(3333);
