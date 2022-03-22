@@ -86,7 +86,7 @@ app.post("/deposit", verifyAccountExistenceByCPF, (request, response) => {
     return response.status(201).send();
 });
 
-app.post("/withdraw", verifyIfCpfAccountExists, (request, response) => {
+app.post("/withdraw", verifyAccountExistenceByCPF, (request, response) => {
     const { costumer } = request;
     const { amount } = request.body;
   
