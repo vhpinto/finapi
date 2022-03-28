@@ -58,7 +58,7 @@ app.post("/account", (request, response) =>{
         name,
         id: uuidv4(),
         statement: [],
-    });12345678900
+    });
 
     return response.status(201).send();
 });
