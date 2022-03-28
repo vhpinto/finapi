@@ -1,3 +1,4 @@
+const { response } = require("express");
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 
@@ -58,7 +59,7 @@ app.post("/account", (request, response) =>{
         name,
         id: uuidv4(),
         statement: [],
-    });
+    });12345678900
 
     return response.status(201).send();
 });
@@ -119,5 +120,20 @@ app.get("/statement/date", verifyAccountExistenceByCPF, (request, response) => {
     
     return response.json(statement);
 });
+
+app.put("/account", verifyAccountExistenceByCPF, (request, response) => {
+    const { name } = request.body;
+    const { customer } = request;
+
+    customer.name = name;
+
+    return response.status(204).send();
+});
+
+app.get("/account", verifyAccountExistenceByCPF, (request, response)=> {
+    const { customer } = request;
+
+    return response.json(customer);
+})
 
 app.listen(3333);
